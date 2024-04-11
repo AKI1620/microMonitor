@@ -1,0 +1,57 @@
+grafana:
+  grafana.ini:
+    smtp:
+      enabled: true
+      host: 172.27.53.165:2525
+      user:
+      password:
+      cert_file:
+      key_file:
+      from_address: grafana.alert123@gmail.com
+      from_name: Grafana
+      skip_verify: false
+      ehlo_identity:
+      startTLS_policy:
+
+alertmanager:
+  config:
+    global:
+      resolve_timeout: 5m
+    inhibit_rules:
+      - source_matchers:
+          - 'severity = critical'
+        target_matchers:
+          - 'severity =~ warning|info'
+        equal:
+          - 'namespace'
+          - 'alertname'
+      - source_matchers:
+          - 'severity = warning'
+        target_matchers:
+          - 'severity = info'
+        equal:
+          - 'namespace'
+          - 'alertname'
+      - source_matchers:
+          - 'alertname = InfoInhibitor'
+        target_matchers:
+          - 'severity = info'
+        equal:
+          - 'namespace'
+    route:
+      group_by: ['namespace']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 12h
+      receiver: 'jiralert'
+      routes:
+      - receiver: 'jiralert'
+        matchers:
+          - alertname =~ "InfoInhibitor|Watchdog|TargetDown"  #Presently filtering and sending alerts for these categories only
+    receivers:
+    - name: 'jiralert'
+      webhook_configs:
+      - send_resolved: true
+        url: http://jiralert:9097/alert  
+    templates:
+    - '/etc/alertmanager/config/*.tmpl'
