@@ -42,16 +42,28 @@ alertmanager:
       group_by: ['namespace']
       group_wait: 30s
       group_interval: 5m
-      repeat_interval: 12h
-      receiver: 'jiralert'
+      repeat_interval: 20m
+      receiver: 'email'
       routes:
       - receiver: 'jiralert'
         matchers:
-          - alertname =~ "InfoInhibitor|Watchdog|TargetDown"  #Presently filtering and sending alerts for these categories only
+          - alertname =~ "InfoInhibitor|TargetDown|KubeSchedulerDown|Watchdog|TestAlert"  #Presently filtering and sending alerts for these categories only
+        continue: true
+      - receiver: 'email'
+        matchers:
+          - alertname =~ "InfoInhibitor|TargetDown|KubeSchedulerDown|Watchdog|TestAlert"
+        continue: true
     receivers:
     - name: 'jiralert'
       webhook_configs:
       - send_resolved: true
-        url: http://jiralert:9097/alert  
+        url: http://jiralert:9097/alert
+    - name: 'email'
+      email_configs:
+      - to: anvith@gmail.com, ratinder@gmail.com, group1DL@gmail.com
+        from: alertmanager123@gmail.com
+        smarthost: 172.27.53.165:2525
+        require_tls: false
+        send_resolved: true
     templates:
     - '/etc/alertmanager/config/*.tmpl'
