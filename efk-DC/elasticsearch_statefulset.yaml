@@ -5,7 +5,7 @@ metadata:
   namespace: kube-logging
 spec:
   serviceName: elasticsearch
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: elasticsearch
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: elasticsearch
-        image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.17.8
         resources:
             limits:
               cpu: 1000m
@@ -32,6 +32,9 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /usr/share/elasticsearch/data
+        # - name: config
+        #   mountPath: /usr/share/elasticsearch/config/elasticsearch.yml
+        #   subPath: elasticsearch.yml
         env:
           - name: cluster.name
             value: k8s-logs
@@ -40,11 +43,15 @@ spec:
               fieldRef:
                 fieldPath: metadata.name
           - name: discovery.seed_hosts
-            value: "es-cluster-0.elasticsearch"
+            value: "es-cluster-0.elasticsearch,es-cluster-1.elasticsearch,es-cluster-2.elasticsearch"
           - name: cluster.initial_master_nodes
-            value: "es-cluster-0"
+            value: "es-cluster-0,es-cluster-1,es-cluster-2"
           - name: ES_JAVA_OPTS
             value: "-Xms512m -Xmx512m" 
+      volumes:
+      - name: config
+        configMap:
+          name: elasticsearch-config
       initContainers:
       - name: fix-permissions
         image: busybox
@@ -74,4 +81,14 @@ spec:
       storageClassName: standard
       resources:
         requests:
-          storage: 10Gi        
+          storage: 5Gi        
+---
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: elasticsearch-config
+# data:
+#   elasticsearch.yml: |-
+#     cluster.name: "docker-cluster"
+#     network.host: 0.0.0.0
+#     script.painless.regex.enabled: true
