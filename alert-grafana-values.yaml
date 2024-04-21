@@ -2,7 +2,7 @@ grafana:
   grafana.ini:
     smtp:
       enabled: true
-      host: 172.27.53.165:2525
+      host: 172.31.35.228:2525
       user:
       password:
       cert_file:
@@ -62,7 +62,7 @@ alertmanager:
       email_configs:
       - to: anvith@gmail.com, ratinder@gmail.com, group1DL@gmail.com
         from: alertmanager123@gmail.com
-        smarthost: 172.27.53.165:2525
+        smarthost: 172.31.35.228:2525
         require_tls: false
         send_resolved: true
     templates:
