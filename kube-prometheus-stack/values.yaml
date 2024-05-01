@@ -870,7 +870,7 @@ grafana:
   defaultDashboardsTimezone: utc
 
   # adminPassword: prom-operator
-  adminPassword: Jan@2023
+  adminPassword: Password@123
 
 
   rbac:
