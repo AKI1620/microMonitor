@@ -183,9 +183,10 @@ gossipPortName: gossip
 ##
 service:
   enabled: true
-  type: ClusterIP
+  type: NodePort
   port: 80
   targetPort: 3000
+  nodePort: 30101
     # targetPort: 4181 To be used with a proxy extraContainer
   ## Service annotations. Can be templated.
   annotations: {}

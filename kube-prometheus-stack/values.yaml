@@ -429,7 +429,7 @@ alertmanager:
     ## Port to expose on each node
     ## Only used if service.type is 'NodePort'
     ##
-    nodePort: 30903
+    nodePort: 30103
     ## List of IP addresses at which the Prometheus server service is available
     ## Ref: https://kubernetes.io/docs/user-guide/services/#external-ips
     ##
@@ -456,7 +456,7 @@ alertmanager:
 
     ## Service type
     ##
-    type: ClusterIP
+    type: NodePort
 
   ## Configuration for creating a separate Service for each statefulset Alertmanager replica
   ##
@@ -2538,7 +2538,7 @@ prometheus:
     ## Port to expose on each node
     ## Only used if service.type is 'NodePort'
     ##
-    nodePort: 30090
+    nodePort: 30102
 
     ## Loadbalancer IP
     ## Only use if service.type is "LoadBalancer"
@@ -2551,7 +2551,7 @@ prometheus:
 
     ## Service type
     ##
-    type: ClusterIP
+    type: NodePort
 
     ## Additional port to define in the Service
     additionalPorts: []
